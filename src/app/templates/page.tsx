@@ -1,3 +1,3 @@
-"use client";
-
-export default function TemplateSelect() {}
+export default function Page() {
+  return <p>Dashboard Page</p>;
+}
