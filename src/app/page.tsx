@@ -1,4 +1,37 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import ProductForm from "../components/ProductForm";
+import ProductList from "../components/ProductList";
+import { getProducts, addProduct } from "./actions";
+import { API_BASE_URL } from "../config";
+import ProductCatalogueDesigner from "../components/ProductCatalogueDesigner";
+
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string; // We'll use this for the API endpoint
+}
+
 const Home = () => {
+  const [products, setProducts] = useState([] as Product[]);
+  useEffect(() => {
+    const handler = async () => {
+      const response: Product[] = await getProducts();
+      setProducts(response);
+    };
+    handler();
+  }, []);
+
+  const onSave = async (formData: FormData) => {
+    const response = await addProduct(formData);
+    setProducts((oldState) => {
+      return { ...oldState, response };
+    });
+  };
+
   return (
     <div className="container mx-auto p-8">
       <h2 className="text-3xl font-bold mb-4">
@@ -27,6 +60,19 @@ const Home = () => {
             sharing.
           </p>
         </div>
+      </div>
+
+      <div className="bg-blue-500 text-white py-2 px-4 w-44 my-4 flex-1 justify-center align-middle rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <a href="http://localhost:3000/">Choose Template</a>
+      </div>
+      <div>
+        <ProductForm onSubmit={onSave} />
+      </div>
+      <div>
+        <ProductList products={products} />
+      </div>
+      <div>
+        <ProductCatalogueDesigner />
       </div>
     </div>
   );
